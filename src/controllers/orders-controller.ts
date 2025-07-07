@@ -60,12 +60,16 @@ class OrdersController {
         'orders.product_id', 
         'products.name',
         'orders.price',
-        'orders.quantity')
+        'orders.quantity',
+        knex.raw('(orders.price * orders.quantity) AS total'),
+        'orders.created_at',
+        'orders.updated_at')
       .join(
         'products',
         'products.id',
         'orders.product_id')
       .where({table_session_id})
+      .orderBy('orders.created_at', 'desc')
 
       return response.json(order)
 
@@ -74,37 +78,24 @@ class OrdersController {
     }
   }  
 
-  // async update(request: Request, response:Response, next:NextFunction) {
-  //   try {
-  //     const id = z.string()
-  //     .transform((value) => Number(value))
-  //     .refine((value) => !isNaN(value), {message: 'ID must be a number'})
-  //     .parse(request.params.id)
-      
-  //     const session = await knex<TablesSessionsRepository>('tables_sessions')
-  //     .where({id})
-  //     .first()
+  async show(request: Request, response:Response, next:NextFunction) {
+    try {
+      const {table_session_id} = request.params
 
-  //     if (!session) {
-  //       throw new AppError('Mesa não encontrada')
-  //     }
+      const order = await knex('orders')
+      .select(
+        knex.raw('COALESCE(SUM(orders.price * orders.quantity), 0) AS total'),
+        knex.raw('COALESCE(SUM(orders.quantity), 0) AS quantity')
+      )
+      .where({table_session_id})
+      .first()
 
-  //     if (session.closed_at) {
-  //       throw new AppError('Essa mesa já está fechada')
-  //     }
+      return response.json(order)
 
-  //     // const {name, price} = bodySchema.parse(request.body)
-
-  //     await knex<TablesSessionsRepository>('tables_sessions')
-  //     .update({closed_at: knex.fn.now()})
-  //     .where({id})
-
-  //     return response.json()
-
-  //   } catch (error) {
-  //     next(error)
-  //   }
-  // }  
+    } catch (error) {
+      next(error)
+    }
+  }  
 }
 
 export {OrdersController}
