@@ -14,22 +14,32 @@ class OrdersController {
 
       const {table_session_id, product_id, quantity} = bodySchema.parse(request.body)
 
-      // const session = await knex<TablesSessionsRepository>('tables_sessions')
-      // .where({table_id})
-      // .orderBy('opened_at', 'desc')
-      // .first()
+      const session = await knex<TablesSessionsRepository>('tables_sessions')
+      .where({id:table_session_id})
+      .first()
 
-      // if (session && !session.closed_at) {
-      //   throw new AppError('Table in use')
-      // }
+      if (!session) {
+        throw new AppError('Sessão não encontrada')
+      }
 
+      if (session.closed_at) {
+        throw new AppError('Essa mesa está fechada')
+      }
+      
+      const product = await knex<ProductRepostiory>('products')
+      .where({id:product_id})
+      .first()
+
+      if (!product) {
+        throw new AppError('Produto não encontrado')
+      }
       // await knex<TablesSessionsRepository>('tables_sessions')
       // .insert({
       //   table_id,
       //   opened_at: knex.fn.now()
       // })
 
-      return response.status(201).json()
+      return response.status(201).json(product)
 
     } catch (error) {
       next(error)
