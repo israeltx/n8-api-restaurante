@@ -34,6 +34,18 @@ class TablesSessionsController {
     }
   }
 
+  async index(request: Request, response:Response, next:NextFunction) {
+    try {
+      const sessions = await knex<TablesSessionsRepository>('tables_sessions')
+      .orderBy('closed_at')
+
+      return response.json(sessions)
+
+    } catch (error) {
+      next(error)
+    }
+  }  
+
   // async update(request: Request, response:Response, next:NextFunction) {
   //   try {
   //     const id = z.string()
