@@ -6,7 +6,14 @@ import { knex } from "@/database/knex";
 class ProductController {
   async index(request: Request, response:Response, next:NextFunction) {
     try {
-      return response.json({message: 'Ok'})
+      const {name} = request.query
+
+      const products = await knex<ProductRepostiory>('products')
+      .select()
+      .whereLike('name', `%${name ?? ''}%`)
+      .orderBy('name')
+
+      return response.json(products)
     } catch (error) {
       next(error)
     }
