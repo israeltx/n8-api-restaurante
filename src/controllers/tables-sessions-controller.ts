@@ -6,14 +6,17 @@ import { knex } from "@/database/knex";
 class TablesSessionsController {
   async create(request: Request, response:Response, next:NextFunction) {
     try {
-      // const bodySchema = z.object({
-      //   name: z.string().trim().min(6),
-      //   price: z.number().gt(0)
-      // })
+      const bodySchema = z.object({
+        table_id: z.number()
+      })
 
-      // const {name, price} = bodySchema.parse(request.body)
+      const {table_id} = bodySchema.parse(request.body)
 
-      // await knex<ProductRepostiory>('products').insert({name, price})
+      await knex<TablesSessionsRepository>('tables_sessions')
+      .insert({
+        table_id,
+        opened_at: knex.fn.now()
+      })
 
       return response.status(201).json()
 
