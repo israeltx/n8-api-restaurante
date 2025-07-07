@@ -49,17 +49,30 @@ class OrdersController {
     }
   }
 
-  // async index(request: Request, response:Response, next:NextFunction) {
-  //   try {
-  //     const sessions = await knex<TablesSessionsRepository>('tables_sessions')
-  //     .orderBy('closed_at')
+  async index(request: Request, response:Response, next:NextFunction) {
+    try {
+      const {table_session_id} = request.params
 
-  //     return response.json(sessions)
+      const order = await knex('orders')
+      .select(
+        'orders.id', 
+        'orders.table_session_id', 
+        'orders.product_id', 
+        'products.name',
+        'orders.price',
+        'orders.quantity')
+      .join(
+        'products',
+        'products.id',
+        'orders.product_id')
+      .where({table_session_id})
 
-  //   } catch (error) {
-  //     next(error)
-  //   }
-  // }  
+      return response.json(order)
+
+    } catch (error) {
+      next(error)
+    }
+  }  
 
   // async update(request: Request, response:Response, next:NextFunction) {
   //   try {

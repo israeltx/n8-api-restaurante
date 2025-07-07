@@ -2,11 +2,11 @@ import { Router } from "express";
 import { OrdersController } from "@/controllers/orders-controller";
 
 const ordersRoutes = Router()
-const orderController = new OrdersController()
+const ordersController = new OrdersController()
 
-// orderRoutes.get('/', orderController.index)
-ordersRoutes.post('/', orderController.create)
-// orderRoutes.put('/:id', orderController.update)
-// orderRoutes.delete('/:id', orderController.remove)
+ordersRoutes.get('/table-session/:table_session_id', ordersController.index)
+ordersRoutes.post('/', ordersController.create)
+// ordersRoutes.put('/:id', orderController.update)
+// ordersRoutes.delete('/:id', orderController.remove)
 
 export {ordersRoutes}
