@@ -1,7 +1,7 @@
 import { connect } from "http2";
 
 export default {
-  client: 'better-sqlite3',
+  client: 'sqlite3',
   connection: {
     filename: './src/database/database.db'
   },
@@ -9,7 +9,7 @@ export default {
     afterCreate: (connection: any, done: any) => {
       connection.run('PRAGMA foreign_keys = ON')
       done()
-    }
+    },
   },
   useNullAsDefault: true,
   migrations: {
