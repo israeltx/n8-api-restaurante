@@ -33,13 +33,16 @@ class OrdersController {
       if (!product) {
         throw new AppError('Produto não encontrado')
       }
-      // await knex<TablesSessionsRepository>('tables_sessions')
-      // .insert({
-      //   table_id,
-      //   opened_at: knex.fn.now()
-      // })
 
-      return response.status(201).json(product)
+      await knex<OrderRepository>('orders')
+      .insert({
+        product_id,
+        table_session_id,
+        quantity,
+        price: product.price,
+      })
+
+      return response.json()
 
     } catch (error) {
       next(error)
